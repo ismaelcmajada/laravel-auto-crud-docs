@@ -1,0 +1,60 @@
+---
+title: Laravel AutoCrud
+description: Comprehensive guide for implementing the AutoCrud trait in Laravel applications
+---
+
+# Laravel AutoCrud Trait
+
+The AutoCrud trait is a powerful Laravel package that automatically generates CRUD operations, forms, tables, and API endpoints for your Eloquent models. This documentation provides a complete implementation guide.
+
+## Overview
+
+The AutoCrud trait simplifies model management by:
+
+- **Automatic CRUD Operations**: Generate create, read, update, delete operations
+- **Dynamic Forms**: Auto-generate forms based on field definitions
+- **Table Generation**: Create data tables with sorting and filtering
+- **API Endpoints**: Expose RESTful endpoints automatically
+- **Relationship Handling**: Support for complex relationships including polymorphic
+- **Validation**: Built-in validation with custom rules support
+- **Event Hooks**: Lifecycle event handling
+
+## Quick Start
+
+```php
+<?php
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Ismaelcmajada\LaravelAutoCrud\Models\Traits\AutoCrud;
+
+class Product extends Model
+{
+    use AutoCrud;
+    
+    protected static function getFields(): array
+    {
+        return [
+            [
+                'name' => 'Name',
+                'field' => 'name',
+                'type' => 'string',
+                'table' => true,
+                'form' => true,
+                'rules' => ['required' => true],
+            ],
+            // More fields...
+        ];
+    }
+}
+```
+
+## Documentation Sections
+
+- [Field Definitions](/fields/) - Define model fields and their properties
+- [Relationships](/relationships/) - Handle model relationships
+- [Validation](/validation/) - Custom validation rules and logic
+- [Custom Search](/custom-search/) - Implement custom search scopes
+- [Event Hooks](/hooks/) - Lifecycle event handling
+- [API Reference](/api/) - Complete API documentation
+- [Examples](/examples/) - Real-world implementation examples

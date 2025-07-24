@@ -112,14 +112,10 @@ protected static function getFields(): array
 ```php
 // Select field with options
 [
-    'name' => 'Status',
-    'field' => 'status',
+    'name' => 'Gender',
+    'field' => 'gender',
     'type' => 'select',
-    'options' => [
-        'active' => 'Active',
-        'inactive' => 'Inactive',
-        'pending' => 'Pending',
-    ],
+    'options' => ['Masculino', 'Femenino', 'Otro'],
     'table' => true,
     'form' => true,
 ]

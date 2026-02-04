@@ -28,21 +28,21 @@ protected static function getFields(): array
 
 ## Common Field Properties
 
-| Property | Type | Required | Description |
-|----------|------|----------|-------------|
-| `name` | string | Yes | Human-readable label for the field |
-| `field` | string | Yes | Database column/attribute name |
-| `type` | string | Yes | Field type (controls rendering and casting) |
-| `table` | bool | No | Whether field appears in data tables |
-| `form` | bool | No | Whether field appears in forms |
-| `rules` | array | No | Validation rules |
-| `default` | mixed | No | Default value |
-| `onlyUpdate` | bool | No | Only visible/usable during updates |
-| `hidden` | bool | No | Hide in forms (useful for `comboField`) |
-| `options` | array | No | Options for select fields |
-| `endPoint` | string | No | API endpoint for combobox fields |
-| `itemTitle` | string | No | Field displayed in combobox |
-| `comboField` | string | No | Auxiliary field added as hidden to form |
+| Property     | Type   | Required | Description                                 |
+| ------------ | ------ | -------- | ------------------------------------------- |
+| `name`       | string | Yes      | Human-readable label for the field          |
+| `field`      | string | Yes      | Database column/attribute name              |
+| `type`       | string | Yes      | Field type (controls rendering and casting) |
+| `table`      | bool   | No       | Whether field appears in data tables        |
+| `form`       | bool   | No       | Whether field appears in forms              |
+| `rules`      | array  | No       | Validation rules                            |
+| `default`    | mixed  | No       | Default value                               |
+| `onlyUpdate` | bool   | No       | Only visible/usable during updates          |
+| `hidden`     | bool   | No       | Hide in forms (useful for `comboField`)     |
+| `options`    | array  | No       | Options for select fields                   |
+| `endPoint`   | string | No       | API endpoint for combobox fields            |
+| `itemTitle`  | string | No       | Field displayed in combobox                 |
+| `comboField` | string | No       | Auxiliary field added as hidden to form     |
 
 ## Field Types
 
@@ -161,6 +161,82 @@ protected static function getFields(): array
     'form' => true,
 ]
 ```
+
+### Image Fields
+
+Image fields handle file uploads with automatic storage management. Images can be public or private (requires authentication).
+
+```php
+// Public image (accessible without auth)
+[
+    'name' => 'Photo',
+    'field' => 'photo',
+    'type' => 'image',
+    'table' => true,
+    'form' => true,
+    'public' => true,
+]
+
+// Private image (requires authentication)
+[
+    'name' => 'Document Photo',
+    'field' => 'document_photo',
+    'type' => 'image',
+    'table' => true,
+    'form' => true,
+    'public' => false,
+]
+```
+
+#### Image Field Properties
+
+| Property | Type | Default | Description                                                                  |
+| -------- | ---- | ------- | ---------------------------------------------------------------------------- |
+| `public` | bool | `true`  | If `true`, image is publicly accessible. If `false`, requires authentication |
+
+**Storage paths:**
+
+- Public: `storage/public/images/{model}/{field}/{id}`
+- Private: `storage/private/images/{model}/{field}/{id}`
+
+### File Fields
+
+File fields handle general file uploads with optional encryption for private files.
+
+```php
+// Public file
+[
+    'name' => 'Attachment',
+    'field' => 'attachment',
+    'type' => 'file',
+    'form' => true,
+    'public' => true,
+]
+
+// Private file (encrypted storage, requires auth)
+[
+    'name' => 'Contract',
+    'field' => 'contract',
+    'type' => 'file',
+    'form' => true,
+    'public' => false,
+]
+```
+
+#### File Field Properties
+
+| Property | Type | Default | Description                                                                                       |
+| -------- | ---- | ------- | ------------------------------------------------------------------------------------------------- |
+| `public` | bool | `true`  | If `true`, file is publicly accessible. If `false`, file is encrypted and requires authentication |
+
+**Storage paths:**
+
+- Public: `storage/public/files/{model}/{field}/{id}`
+- Private: `storage/private/files/{model}/{field}/{id}` (encrypted)
+
+:::note
+Private files are automatically encrypted using Laravel's `Crypt` facade when stored and decrypted when retrieved.
+:::
 
 ## Validation Rules
 

@@ -5,7 +5,7 @@ description: Handle model relationships with the AutoCrud trait
 
 # Relationships
 
-The AutoCrud trait provides comprehensive support for Eloquent relationships, including belongsTo, morphTo, and belongsToMany relationships.
+The AutoCrud trait provides comprehensive support for Eloquent relationships, including BelongsTo, MorphTo, HasMany, and BelongsToMany relationships.
 
 ## BelongsTo Relationships
 
@@ -30,16 +30,16 @@ Define belongsTo relationships using the `relation` property in field definition
 
 ### Relation Properties
 
-| Property | Type | Required | Description |
-|----------|------|----------|-------------|
-| `model` | string | Yes | Full class path to the related model |
-| `relation` | string | Yes | Method name (resolved dynamically via `__call`) |
-| `tableKey` | string | No | Template for displaying in tables |
-| `formKey` | string | No | Template for displaying in forms |
-| `polymorphic` | bool | No | Whether this is a morphTo relationship |
-| `morphType` | string | No | Type column name (required if polymorphic = true) |
-| `serverSide` | bool | No | Whether formKey/tableKey is resolved on backend |
-| `storeShortcut` | bool | No | Useful for pivot tables - allows quick creation |
+| Property        | Type   | Required | Description                                       |
+| --------------- | ------ | -------- | ------------------------------------------------- |
+| `model`         | string | Yes      | Full class path to the related model              |
+| `relation`      | string | Yes      | Method name (resolved dynamically via `__call`)   |
+| `tableKey`      | string | No       | Template for displaying in tables                 |
+| `formKey`       | string | No       | Template for displaying in forms                  |
+| `polymorphic`   | bool   | No       | Whether this is a morphTo relationship            |
+| `morphType`     | string | No       | Type column name (required if polymorphic = true) |
+| `serverSide`    | bool   | No       | Whether formKey/tableKey is resolved on backend   |
+| `storeShortcut` | bool   | No       | Useful for pivot tables - allows quick creation   |
 
 ### Template Keys
 
@@ -72,7 +72,107 @@ For polymorphic relationships, set `polymorphic` to true and specify the `morphT
 ]
 ```
 
-## External Relations (BelongsToMany)
+## HasMany Relationships
+
+For one-to-many relationships where the parent manages child records, use `$externalRelations` with `type: 'hasMany'`:
+
+```php
+protected static $externalRelations = [
+    [
+        'type' => 'hasMany',
+        'relation' => 'roomtypes',
+        'name' => 'Room Types',
+        'model' => RoomType::class,
+        'foreignKey' => 'hotel_id',
+        'tableKey' => '{name}',
+        'formKey' => '{name}',
+        'table' => true,
+    ],
+];
+```
+
+### HasMany Properties
+
+| Property        | Type   | Required | Description                           |
+| --------------- | ------ | -------- | ------------------------------------- |
+| `type`          | string | Yes      | Must be `'hasMany'`                   |
+| `relation`      | string | Yes      | Relationship method name              |
+| `name`          | string | Yes      | Display name                          |
+| `model`         | string | Yes      | Related model class                   |
+| `foreignKey`    | string | Yes      | Foreign key on the child model        |
+| `tableKey`      | string | No       | Template for table display            |
+| `formKey`       | string | No       | Template for form display             |
+| `table`         | bool   | No       | Show in tables                        |
+| `storeShortcut` | bool   | No       | Allow quick creation of child records |
+
+### Complete HasMany Example
+
+```php
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Ismaelcmajada\LaravelAutoCrud\Models\Traits\AutoCrud;
+
+class Hotel extends Model
+{
+    use AutoCrud, SoftDeletes;
+
+    protected $table = 'hotels';
+
+    protected static function getFields(): array
+    {
+        return [
+            [
+                'name' => 'Name',
+                'field' => 'name',
+                'type' => 'string',
+                'table' => true,
+                'form' => true,
+                'rules' => ['required' => true, 'unique' => true],
+            ],
+            [
+                'name' => 'Logo',
+                'field' => 'logo',
+                'type' => 'image',
+                'table' => true,
+                'form' => true,
+            ],
+        ];
+    }
+
+    protected static $externalRelations = [
+        [
+            'type' => 'hasMany',
+            'relation' => 'roomtypes',
+            'name' => 'Room Types',
+            'model' => RoomType::class,
+            'foreignKey' => 'hotel_id',
+            'tableKey' => '{name}',
+            'formKey' => '{name}',
+            'table' => true,
+        ],
+        [
+            'type' => 'hasMany',
+            'relation' => 'extrafields',
+            'name' => 'Extra Fields',
+            'model' => ExtraField::class,
+            'foreignKey' => 'hotel_id',
+            'tableKey' => '{name}',
+            'formKey' => '{name}',
+            'table' => true,
+        ],
+    ];
+}
+```
+
+The child records (RoomType, ExtraField) are managed inline within the parent form. The `foreignKey` is automatically set when creating child records.
+
+---
+
+## BelongsToMany Relationships
 
 For complex many-to-many relationships, use the `$externalRelations` property:
 
@@ -103,18 +203,18 @@ protected static $externalRelations = [
 
 ### External Relation Properties
 
-| Property | Type | Required | Description |
-|----------|------|----------|-------------|
-| `relation` | string | Yes | Relationship method name |
-| `name` | string | Yes | Display name for the relationship |
-| `model` | string | Yes | Related model class |
-| `pivotTable` | string | Yes | Pivot table name |
-| `foreignKey` | string | Yes | Foreign key in pivot table |
-| `relatedKey` | string | Yes | Related key in pivot table |
-| `pivotModel` | string | No | Pivot model class |
-| `pivotFields` | array | No | Fields for the pivot table |
-| `table` | bool | No | Show in tables |
-| `formKey` | string | No | Display template |
+| Property      | Type   | Required | Description                       |
+| ------------- | ------ | -------- | --------------------------------- |
+| `relation`    | string | Yes      | Relationship method name          |
+| `name`        | string | Yes      | Display name for the relationship |
+| `model`       | string | Yes      | Related model class               |
+| `pivotTable`  | string | Yes      | Pivot table name                  |
+| `foreignKey`  | string | Yes      | Foreign key in pivot table        |
+| `relatedKey`  | string | Yes      | Related key in pivot table        |
+| `pivotModel`  | string | No       | Pivot model class                 |
+| `pivotFields` | array  | No       | Fields for the pivot table        |
+| `table`       | bool   | No       | Show in tables                    |
+| `formKey`     | string | No       | Display template                  |
 
 ## Automatic Relationship Handling
 
@@ -138,6 +238,7 @@ protected static $includes = [
 ```
 
 The `getIncludes()` method automatically adds:
+
 - `'records.user'`
 - Relationships defined in `getFields()`
 - Relationships from `$externalRelations`

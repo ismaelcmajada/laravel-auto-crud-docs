@@ -16,12 +16,12 @@ export default defineConfig({
       ],
       sidebar: [
         {
-          label: "Laravel AutoCrud",
+          label: "Overview",
+          slug: "index",
+        },
+        {
+          label: "Backend",
           items: [
-            {
-              label: "Overview",
-              slug: "index",
-            },
             {
               label: "Field Definitions",
               slug: "fields",
@@ -49,6 +49,23 @@ export default defineConfig({
             {
               label: "Examples",
               slug: "examples",
+            },
+          ],
+        },
+        {
+          label: "Frontend",
+          items: [
+            {
+              label: "AutoTable",
+              slug: "frontend/auto-table",
+            },
+            {
+              label: "AutoFormDialog",
+              slug: "frontend/auto-form-dialog",
+            },
+            {
+              label: "AutoForm",
+              slug: "frontend/auto-form",
             },
           ],
         },

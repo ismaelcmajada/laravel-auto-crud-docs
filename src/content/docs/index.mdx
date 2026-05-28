@@ -41,7 +41,28 @@ php artisan vendor:publish --tag=laravel-auto-crud --force
 
 # Migrations (optional, for custom fields)
 php artisan vendor:publish --tag=laravel-auto-crud-migrations --force
+
+# Skill for Agents (OpenCode AI)
+php artisan vendor:publish --tag=laravel-auto-crud-skill --force
+
+# Skill for Claude Code
+php artisan vendor:publish --tag=laravel-auto-crud-skill-claude --force
 ```
+
+Register the frontend adapter before rendering published components.
+
+For Inertia apps:
+
+```js
+import {
+  createAutoCrudPlugin,
+  createInertiaAutoCrudAdapter,
+} from "@/Adapters/LaravelAutoCrud"
+
+app.use(createAutoCrudPlugin({ adapter: createInertiaAutoCrudAdapter() }))
+```
+
+For external API frontends, use `createApiAutoCrudAdapter()` instead. See [API Mode](/api-mode/).
 
 ## Quick Start
 
@@ -147,6 +168,7 @@ That's it! You now have a fully functional CRUD interface.
 - [Custom Search](/custom-search/) - Search scopes
 - [Event Hooks](/hooks/) - Lifecycle events
 - [API Reference](/api/) - Complete API docs
+- [API Mode](/api-mode/) - JSON API for external frontends
 - [Examples](/examples/) - Real-world examples
 
 **Frontend:**
